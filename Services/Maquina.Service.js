@@ -5,13 +5,13 @@
  */
 function verificarMaquinaCadastrada(idMaquina) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const planilhaPatio = ss.getSheetByName("PATIO");
-  const planilhaSalaColetor = ss.getSheetByName("SALACOLETOR");
+  const planilhaPatio = ss.getSheetByName("Patio");
+  const planilhaDispositivos = ss.getSheetByName("Dispositivos");
 
   const dadosPatio = planilhaPatio.getRange("A2:C").getValues();
-  const dadosSalaColetor = planilhaSalaColetor.getRange("A2:C").getValues();
+  const dadosDispositivos = planilhaDispositivos.getRange("A2:C").getValues();
 
-  for (let dados of [dadosPatio, dadosSalaColetor]) {
+  for (let dados of [dadosPatio, dadosDispositivos]) {
     for (let row of dados) {
       if (row[0] == idMaquina) {
         return true;
@@ -29,10 +29,10 @@ function verificarMaquinaCadastrada(idMaquina) {
  */
 function verificarMaquinaEmUso(idMaquina) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const planilhaOperacao = ss.getSheetByName("OPERACAO");
-  const dadosOperacao = planilhaOperacao.getRange("A2:I").getValues();
+  const planilhaControle = ss.getSheetByName("Controle");
+  const dadosControle = planilhaControle.getRange("A2:I").getValues();
 
-  for (let row of dadosOperacao) {
+  for (let row of dadosControle) {
     if (row[0] == idMaquina && row[8] !== "Disponível") {
       return true;
     }
@@ -48,13 +48,13 @@ function verificarMaquinaEmUso(idMaquina) {
  */
 function obterInformacoesMaquina(idMaquina) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const planilhaPatio = ss.getSheetByName("PATIO");
-  const planilhaSalaColetor = ss.getSheetByName("SALACOLETOR");
+  const planilhaPatio = ss.getSheetByName("Patio");
+  const planilhaDispositivos = ss.getSheetByName("Dispositivos");
 
   const dadosPatio = planilhaPatio.getRange("A2:C").getValues();
-  const dadosSalaColetor = planilhaSalaColetor.getRange("A2:C").getValues();
+  const dadosDispositivos = planilhaDispositivos.getRange("A2:C").getValues();
 
-  for (let dados of [dadosPatio, dadosSalaColetor]) {
+  for (let dados of [dadosPatio, dadosDispositivos]) {
     for (let row of dados) {
       if (row[0] == idMaquina) {
         return { tipo: row[1], status: row[2] };
@@ -72,16 +72,16 @@ function obterInformacoesMaquina(idMaquina) {
  */
 function atualizarStatusMaquina(idMaquina, novoStatus) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const planilhaPatio = ss.getSheetByName("PATIO");
-  const planilhaSalaColetor = ss.getSheetByName("SALACOLETOR");
+  const planilhaPatio = ss.getSheetByName("Patio");
+  const planilhaDispositivos = ss.getSheetByName("Dispositivos");
 
   const dadosPatio = planilhaPatio.getRange("A2:C").getValues();
-  const dadosSalaColetor = planilhaSalaColetor.getRange("A2:C").getValues();
+  const dadosDispositivos = planilhaDispositivos.getRange("A2:C").getValues();
 
-  for (let [index, dados] of [dadosPatio, dadosSalaColetor].entries()) {
+  for (let [index, dados] of [dadosPatio, dadosDispositivos].entries()) {
     for (let i = 0; i < dados.length; i++) {
       if (dados[i][0] == idMaquina) {
-        const planilha = index === 0 ? planilhaPatio : planilhaSalaColetor;
+        const planilha = index === 0 ? planilhaPatio : planilhaDispositivos;
         planilha.getRange(i + 2, 3).setValue(novoStatus);
         return;
       }

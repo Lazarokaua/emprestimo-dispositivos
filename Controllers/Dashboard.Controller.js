@@ -5,9 +5,9 @@
 function atualizarDashboard() {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
     const planilhaDashboard = ss.getSheetByName("DASHBOARD");
-    const planilhaOperacao = ss.getSheetByName("OPERACAO");
-    const planilhaPatio = ss.getSheetByName("PATIO");
-    const planilhaSalaColetor = ss.getSheetByName("SALACOLETOR");
+    const planilhaControle = ss.getSheetByName("Controle");
+    const planilhaPatio = ss.getSheetByName("Patio");
+    const planilhaDispositivos = ss.getSheetByName("Dispositivos");
   
     // Limpa o dashboard atual para nova atualização
     planilhaDashboard.clear();
@@ -17,15 +17,15 @@ function atualizarDashboard() {
     planilhaDashboard.getRange("A1:B1").merge().setFontWeight("bold").setHorizontalAlignment("center");
   
     // Obtém dados de todas as planilhas relevantes
-    const dadosOperacao = planilhaOperacao.getDataRange().getValues();
+    const dadosControle = planilhaControle.getDataRange().getValues();
     const dadosPatio = planilhaPatio.getDataRange().getValues();
-    const dadosSalaColetor = planilhaSalaColetor.getDataRange().getValues();
+    const dadosDispositivos = planilhaDispositivos.getDataRange().getValues();
   
     // Calcula estatísticas gerais do sistema
-    const totalMaquinas = dadosPatio.length + dadosSalaColetor.length - 2; // Subtrai cabeçalhos
-    const maquinasEmUso = dadosOperacao.filter(row => row[8] === "Em Uso").length;
+    const totalMaquinas = dadosPatio.length + dadosDispositivos.length - 2; // Subtrai cabeçalhos
+    const maquinasEmUso = dadosControle.filter(row => row[8] === "Em Uso").length;
     const maquinasDisponiveis = totalMaquinas - maquinasEmUso;
-    const maquinasPendentes = dadosOperacao.filter(row => row[8] === "Pendente").length;
+    const maquinasPendentes = dadosControle.filter(row => row[8] === "Pendente").length;
   
     // Adiciona seção de estatísticas gerais
     let row = 3;
@@ -46,7 +46,7 @@ function atualizarDashboard() {
   
     // Calcula e adiciona estatísticas por tipo de máquina
     const tiposMaquinas = {};
-    [...dadosPatio.slice(1), ...dadosSalaColetor.slice(1)].forEach(linha => {
+    [...dadosPatio.slice(1), ...dadosDispositivos.slice(1)].forEach(linha => {
       const tipo = linha[1];
       tiposMaquinas[tipo] = (tiposMaquinas[tipo] || 0) + 1;
     });
@@ -62,31 +62,31 @@ function atualizarDashboard() {
     row += 2;
   
     // Processa informações específicas por tipo de dispositivo
-    const tiposDispositivos = ["Paleteira", "Empilhadeira", "Coletor"];
+    const tiposDispositivos = ["Paleteira Manual", "Empilhadeira", "Coletor"];
     
     // Adiciona cards para cada tipo de dispositivo
     tiposDispositivos.forEach(tipo => {
       let total = 0;
       let emUso = 0;
       let noPatio = 0;
-      let noSalaColetor = 0;
+      let noDispositivos = 0;
   
       // Calcula total e disponíveis por localização
-      [...dadosPatio.slice(1), ...dadosSalaColetor.slice(1)].forEach(linha => {
+      [...dadosPatio.slice(1), ...dadosDispositivos.slice(1)].forEach(linha => {
         if (linha[1].toLowerCase().includes(tipo.toLowerCase())) {
           total++;
           if (linha[2] === "Disponível") {
-            if (tipo === "Paleteira" || tipo === "Empilhadeira") {
+            if (tipo === "Paleteira Manual" || tipo === "Empilhadeira") {
               noPatio++;
             } else {
-              noSalaColetor++;
+              noDispositivos++;
             }
           }
         }
       });
 
       // Calcula máquinas em uso a partir da planilha de operação
-      dadosOperacao.slice(1).forEach(linha => {
+      dadosControle.slice(1).forEach(linha => {
         if (linha[1].toLowerCase().includes(tipo.toLowerCase()) && linha[8] === "Em Uso") {
           emUso++;
         }
@@ -101,19 +101,19 @@ function atualizarDashboard() {
       planilhaDashboard.getRange(`A${row}`).setValue("Em uso:");
       planilhaDashboard.getRange(`B${row}`).setValue(emUso);
       row++;
-      if (tipo === "Paleteira" || tipo === "Empilhadeira") {
+      if (tipo === "Paleteira Manual Manual" || tipo === "Empilhadeira") {
         planilhaDashboard.getRange(`A${row}`).setValue("No Patio:");
         planilhaDashboard.getRange(`B${row}`).setValue(noPatio);
       } else {
         planilhaDashboard.getRange(`A${row}`).setValue("Na Sala Coletor:");
-        planilhaDashboard.getRange(`B${row}`).setValue(noSalaColetor);
+        planilhaDashboard.getRange(`B${row}`).setValue(noDispositivos);
       }
       row += 2;
     });
   
     // Calcula e adiciona estatísticas por setor
     const maquinasPorSetor = {};
-    dadosOperacao.slice(1).forEach(linha => {
+    dadosControle.slice(1).forEach(linha => {
       if (linha[8] === "Em Uso") { // Verifica se está em uso
         const setor = linha[4]; // Coluna E - Setor
         const tipo = linha[1];  // Coluna B - Tipo de máquina
@@ -151,7 +151,7 @@ function atualizarDashboard() {
     row++;
   
     const maquinasEmUsoPorSetor = {};
-    dadosOperacao.slice(1).forEach(linha => {
+    dadosControle.slice(1).forEach(linha => {
       const status = linha[8]; // Assumindo que o status está na coluna I (índice 8)
       if (status === "Em Uso") {
         const setor = linha[4]; // Assumindo que o setor está na coluna E (índice 4)

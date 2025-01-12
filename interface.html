@@ -171,8 +171,8 @@
     // Configuração para o formulário de empréstimo
     matriculaEmprestimo.addEventListener("input", function() {
       const matricula = this.value;
-      // Verifica se a matrícula tem entre 6 e 8 dígitos
-      if (/^\d{6,8}$/.test(matricula)) {
+      // Verifica se a matrícula tem entre 4 e 5 dígitos
+      if (/^\d{4,5}$/.test(matricula)) {
         mostrarCarregamento();
         google.script.run
           .withSuccessHandler(function(colaborador) {

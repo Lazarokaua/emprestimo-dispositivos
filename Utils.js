@@ -17,13 +17,13 @@ function calcularDiferencaEmHoras(dataInicial, dataFinal) {
  */
 function verificarMaquinasPendentes(dataInicial, dataFinal) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const planilhaOperacao = ss.getSheetByName("OPERACAO"); // Planilha de Operação
-  const ultimaLinha = planilhaOperacao.getLastRow(); // Última linha da planilha
+  const planilhaControle = ss.getSheetByName("Controle"); // Planilha de Operação
+  const ultimaLinha = planilhaControle.getLastRow(); // Última linha da planilha
 
   for (let i = 2; i <= ultimaLinha; i++) {
     // Início do loop a partir da segunda linha
-    const dataEmprestimo = planilhaOperacao.getRange(i, 7).getValue(); // Coluna 7: Hora Empréstimo
-    const status = planilhaOperacao.getRange(i, 9).getValue(); // Coluna 9: Status
+    const dataEmprestimo = planilhaControle.getRange(i, 7).getValue(); // Coluna 7: Hora Empréstimo
+    const status = planilhaControle.getRange(i, 9).getValue(); // Coluna 9: Status
 
     if (status === "Em Uso") {
       // Verifica se o status é "Em Uso"
@@ -35,7 +35,7 @@ function verificarMaquinasPendentes(dataInicial, dataFinal) {
 
       if (diferencaEmHoras >= 12) {
         // Verifica se a diferença em horas é maior ou igual a 12
-        planilhaOperacao.getRange(i, 9).setValue("Pendente");
+        planilhaControle.getRange(i, 9).setValue("Pendente");
       }
     }
   }

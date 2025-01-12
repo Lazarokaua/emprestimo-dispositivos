@@ -3,14 +3,14 @@
  */
 function sincronizarMaquinasEmUso() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const planilhaOperacao = ss.getSheetByName("OPERACAO");
-  const dadosOperacao = planilhaOperacao.getRange("A2:I").getValues();
+  const planilhaControle = ss.getSheetByName("Controle");
+  const dadosControle = planilhaControle.getRange("A2:I").getValues();
   
-  // Reinicia o objeto de controle
+  // Reinicia o objeto de Controle
   let maquinasEmUsoPorColaborador = {};
   
   // Percorre todas as máquinas em uso na planilha
-  dadosOperacao.forEach(row => {
+  dadosControle.forEach(row => {
     if (row[8] === "Em Uso") { // Se status é "Em Uso"
       const matricula = row[2];  // Matrícula do colaborador
       const tipoMaquina = row[1]; // Tipo da máquina
@@ -50,14 +50,14 @@ function registrarEmprestimo(matricula, idMaquina) {
         };
       }
 
-      matricula = String(matricula).padStart(7, '0');
+      matricula = String(matricula).padStart(4, '0');
       
       const ss = SpreadsheetApp.getActiveSpreadsheet();
-      const planilhaOperacao = ss.getSheetByName("OPERACAO");
+      const planilhaControle = ss.getSheetByName("Controle");
       const scriptProperties = PropertiesService.getScriptProperties();
       
       // Verifica se a planilha de operação existe
-      if (!planilhaOperacao) {
+      if (!planilhaControle) {
         return { 
           tipo: "erro", 
           mensagem: "Erro: Planilha de operação não encontrada!" 
@@ -123,8 +123,8 @@ function registrarEmprestimo(matricula, idMaquina) {
       ];
 
       // Insere o novo registro na planilha
-      planilhaOperacao.insertRowsBefore(2, 1);
-      const range = planilhaOperacao.getRange(2, 1, 1, 9);
+      planilhaControle.insertRowsBefore(2, 1);
+      const range = planilhaControle.getRange(2, 1, 1, 9);
       range.setValues([novoRegistro]);
 
       // Atualiza o status da máquina
@@ -197,12 +197,12 @@ function verificarInconsistencias() {
   
   // Pega os dados reais da planilha
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const planilhaOperacao = ss.getSheetByName("OPERACAO");
-  const dadosOperacao = planilhaOperacao.getRange("A2:I").getValues();
+  const planilhaControle = ss.getSheetByName("Controle");
+  const dadosControle = planilhaControle.getRange("A2:I").getValues();
   
   // Monta objeto com dados reais da planilha
   const estadoReal = {};
-  dadosOperacao.forEach(row => {
+  dadosControle.forEach(row => {
     if (row[8] === "Em Uso") {
       const matricula = row[2];
       const tipoMaquina = row[1];

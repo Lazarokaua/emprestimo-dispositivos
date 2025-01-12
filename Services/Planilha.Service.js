@@ -37,7 +37,7 @@ function abrirInterface() {
  */
 function limparConteudo() {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const planilha = ss.getSheetByName("OPERACAO");
+    const planilha = ss.getSheetByName("Controle");
     const valores = planilha.getRange("I:I").getValues();
 
     // Remove linhas com status "Disponível" de baixo para cima
@@ -54,7 +54,7 @@ function limparConteudo() {
  */
 function limparConteudoTodo() {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const planilha = ss.getSheetByName("OPERACAO");
+    const planilha = ss.getSheetByName("Controle");
 
     // Solicita confirmação do usuário
     const resposta = Browser.msgBox(
@@ -78,7 +78,7 @@ function limparConteudoTodo() {
 
 // Adicionar nova função para abrir a interface web
 function abrirInterfaceWeb() {
-  const url = 'https://script.google.com/macros/s/AKfycbyQeOnfYN5Rar2VhoM5BgzkAxNFyYsoGfWARMfFtYN6b8pEIfztlbjvCmx5ANwxyOI/exec';
+  const url = 'https://script.google.com/macros/s/AKfycbxZ0V2hHjqcge43YuznaUgqfcTZzU5kjJtIhFP4hxFi4G_Fn6UIUWKamttKI39tLWse/exec';
   const html = HtmlService.createHtmlOutput(
     `<script>
       window.open('${url}', '_blank');

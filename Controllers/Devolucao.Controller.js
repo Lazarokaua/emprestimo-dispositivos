@@ -5,17 +5,17 @@
  */
 function registrarDevolucao(idMaquina) {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    const planilhaOperacao = ss.getSheetByName("OPERACAO");
+    const planilhaControle = ss.getSheetByName("Controle");
     const planilhaRegistros = ss.getSheetByName("REGISTROS");
   
     // Obtém dados da planilha de operação
-    const dadosOperacao = planilhaOperacao.getRange("A2:I").getValues();
+    const dadosControle = planilhaControle.getRange("A2:I").getValues();
     let linhaMaquina = -1;
   
     // Localiza a máquina em uso ou pendente
-    for (let i = 0; i < dadosOperacao.length; i++) {
-      if (dadosOperacao[i][0] == idMaquina && 
-          (dadosOperacao[i][8] === "Em Uso" || dadosOperacao[i][8] === "Pendente")) {
+    for (let i = 0; i < dadosControle.length; i++) {
+      if (dadosControle[i][0] == idMaquina && 
+          (dadosControle[i][8] === "Em Uso" || dadosControle[i][8] === "Pendente")) {
         linhaMaquina = i + 2;
         break;
       }
@@ -33,13 +33,13 @@ function registrarDevolucao(idMaquina) {
     const dataDevolucao = new Date();
   
     // Atualiza informações na planilha de operação
-    planilhaOperacao.getRange(linhaMaquina, 8)
+    planilhaControle.getRange(linhaMaquina, 8)
                    .setValue(dataDevolucao)
                    .setNumberFormat("dd/MM/yyyy HH:mm:ss");
-    planilhaOperacao.getRange(linhaMaquina, 9).setValue("Disponível");
+    planilhaControle.getRange(linhaMaquina, 9).setValue("Disponível");
   
     // Prepara dados para histórico
-    const dadosSaida = planilhaOperacao.getRange(linhaMaquina, 1, 1, 9).getValues()[0];
+    const dadosSaida = planilhaControle.getRange(linhaMaquina, 1, 1, 9).getValues()[0];
   
     // Organiza dados para registro histórico
     const registro = [
@@ -57,12 +57,12 @@ function registrarDevolucao(idMaquina) {
   
     // Adiciona ao histórico e remove da operação atual
     planilhaRegistros.appendRow(registro);
-    planilhaOperacao.deleteRow(linhaMaquina);
+    planilhaControle.deleteRow(linhaMaquina);
   
     // Atualiza status da máquina
     atualizarStatusMaquina(idMaquina, "Disponível");
   
-    // Atualiza controle de máquinas por colaborador
+    // Atualiza Controle de máquinas por colaborador
     const scriptProperties = PropertiesService.getScriptProperties();
     let maquinasEmUsoPorColaborador = JSON.parse(
       scriptProperties.getProperty('maquinasEmUsoPorColaborador') || '{}'
