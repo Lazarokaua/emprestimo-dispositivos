@@ -21,3 +21,9 @@ function abrirInterface() {
     .setSandboxMode(HtmlService.SandboxMode.IFRAME);
   SpreadsheetApp.getUi().showModalDialog(html, "Gerenciador de Dispositivos");
 }
+
+
+function getProjectId() {
+  const projectId = PropertiesService.getScriptProperties().getProperty('PROJECT_ID');
+  return projectId;
+}
