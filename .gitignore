@@ -1,0 +1,7 @@
+# Google Apps Script
+.clasp.json
+
+# Outros arquivos que geralmente devem ser ignorados
+.DS_Store
+node_modules/
+*.log 

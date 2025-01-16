@@ -23,7 +23,3 @@ function abrirInterface() {
 }
 
 
-function getProjectId() {
-  const projectId = PropertiesService.getScriptProperties().getProperty('PROJECT_ID');
-  return projectId;
-}
